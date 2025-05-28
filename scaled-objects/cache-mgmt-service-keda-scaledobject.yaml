@@ -1,0 +1,41 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: cache-mgmt-service-keda-scaledobject
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cache-mgmt-service
+  pollingInterval: 5
+  cooldownPeriod: 300
+  minReplicaCount: 2
+  maxReplicaCount: 2
+  fallback:
+    failureThreshold: 3
+    replicas: 2
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 120
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 60
+        scaleDown:
+          stabilizationWindowSeconds: 120
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 60
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://rancher-monitoring-kube-pr-prometheus.cattle-monitoring-system:9090
+        metricName: container_network_receive_bytes_total
+        query: sum(irate(container_network_receive_bytes_total{cluster="",namespace="default"}[5m]) * on (namespace,pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="",namespace="default", workload=~"cache-mgmt-service", workload_type="deployment"})
+        threshold: '238'
+        ignoreNullValues: "true"
+
