@@ -10,11 +10,11 @@ spec:
     name: cache-mgmt-service
   pollingInterval: 5
   cooldownPeriod: 300
-  minReplicaCount: 2
+  minReplicaCount: 1
   maxReplicaCount: 2
   fallback:
     failureThreshold: 3
-    replicas: 2
+    replicas: 1
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
