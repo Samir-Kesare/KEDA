@@ -10,11 +10,11 @@ spec:
     name: my_service
   pollingInterval: 5
   cooldownPeriod: 300
-  minReplicaCount: 2.0
-  maxReplicaCount: 2.0
+  minReplicaCount: 2
+  maxReplicaCount: 2
   fallback:
     failureThreshold: 3
-    replicas: 2.0
+    replicas: 2
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
@@ -36,6 +36,6 @@ spec:
         serverAddress: http://rancher-monitoring-kube-pr-prometheus.cattle-monitoring-system:9090
         metricName: container_network_receive_bytes_total
         query: sum(irate(container_network_receive_bytes_total{cluster="",namespace="Default"}[5m]) * on (namespace,pod) group_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster="",namespace="Default", workload=~"my_service", workload_type="deployment"})
-        threshold: '35.0'
+        threshold: '35'
         ignoreNullValues: "true"
 
